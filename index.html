@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0e1a">
+<title>Yassin Chat — Pro</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👑</text></svg>">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#0a0e1a;--bg2:#0e1524;--card:#131b2e;--card2:#1a2439;--card3:#232f4d;
+  --border:#1c2740;--border2:#26334f;
+  --text:#e8eefb;--muted:#8595b8;--muted2:#5a6a8c;
+  --primary:#2563eb;--primary2:#3b82f6;--primary3:#60a5fa;
+  --gold:#f59e0b;--green:#10b981;--red:#ef4444;--pink:#ec4899;--purple:#8b5cf6;
+  --shadow:0 30px 80px rgba(0,0,0,.7);
+}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--text);}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+input,textarea{font-family:inherit;outline:none;border:none;resize:none;}
+img,video{display:block;max-width:100%;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+
+/* ===== Login ===== */
+#login{
+  position:fixed;inset:0;z-index:100;
+  display:flex;align-items:center;justify-content:center;padding:18px;
+  background:radial-gradient(circle at 15% 15%,rgba(37,99,235,.35),transparent 45%),
+             radial-gradient(circle at 85% 85%,rgba(139,92,246,.28),transparent 45%),
+             #0a0e1a;
+  overflow:auto;
+}
+.login-box{
+  position:relative;z-index:2;width:100%;max-width:420px;
+  background:linear-gradient(180deg,rgba(19,27,46,.95),rgba(14,21,36,.95));
+  border:1px solid rgba(37,99,235,.25);
+  border-radius:28px;padding:36px 26px;
+  backdrop-filter:blur(28px);
+  box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.05);
+  animation:popIn .55s cubic-bezier(.2,.9,.3,1);
+}
+@keyframes popIn{from{transform:scale(.92) translateY(24px);opacity:0}to{transform:none;opacity:1}}
+.crown-wrap{position:relative;width:90px;height:90px;margin:0 auto 22px;}
+.crown-wrap::after{
+  content:'';position:absolute;inset:-6px;border-radius:50%;
+  background:conic-gradient(from 0deg,#2563eb,#8b5cf6,#ec4899,#f59e0b,#2563eb);
+  animation:spin 5s linear infinite;filter:blur(14px);opacity:.75;z-index:0;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.crown-inner{
+  position:relative;z-index:1;width:100%;height:100%;border-radius:28px;
+  background:linear-gradient(135deg,#1e40af,#2563eb,#3b82f6);
+  display:flex;align-items:center;justify-content:center;font-size:44px;
+  box-shadow:inset 0 2px 20px rgba(255,255,255,.2);
+}
+.login-title{
+  text-align:center;font-size:28px;font-weight:900;margin-bottom:6px;
+  background:linear-gradient(135deg,#93c5fd,#60a5fa,#a78bfa);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.login-sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:26px;font-weight:500;}
+
+.fld{margin-bottom:14px;}
+.fld label{display:block;font-size:12px;color:var(--muted);margin-bottom:7px;font-weight:700;}
+.fld input,.fld textarea{
+  width:100%;padding:15px 16px;background:rgba(10,14,26,.7);
+  border:1.5px solid var(--border);border-radius:14px;
+  color:var(--text);font-size:15px;transition:.25s;font-weight:500;
+}
+.fld input:focus,.fld textarea:focus{
+  border-color:var(--primary);background:rgba(10,14,26,.95);
+  box-shadow:0 0 0 4px rgba(37,99,235,.15);
+}
+.btn{
+  width:100%;padding:16px;border-radius:14px;font-size:16px;font-weight:800;transition:.2s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-grad{
+  background:linear-gradient(135deg,#1e40af,#2563eb,#3b82f6);color:#fff;
+  box-shadow:0 12px 30px rgba(37,99,235,.45),inset 0 1px 0 rgba(255,255,255,.15);
+}
+.btn-grad:active{transform:scale(.97);}
+.btn-grad:disabled{opacity:.6;}
+.btn-ghost{background:var(--card2);color:var(--text);}
+.btn-ghost:active{transform:scale(.97);background:var(--card3);}
+.btn-danger{background:rgba(239,68,68,.15);color:#f87171;}
+.btn-danger:active{background:rgba(239,68,68,.25);}
+.err-msg{color:#f87171;font-size:13px;text-align:center;margin-top:12px;min-height:18px;font-weight:600;}
+
+/* ===== App ===== */
+#app{display:none;flex-direction:column;height:100%;}
+#app.on{display:flex;}
+
+.topbar{
+  display:flex;align-items:center;gap:12px;padding:14px 16px;
+  background:linear-gradient(180deg,rgba(19,27,46,.98),rgba(14,21,36,.95));
+  backdrop-filter:blur(20px);border-bottom:1px solid var(--border);
+  position:relative;z-index:30;
+}
+.topbar::after{
+  content:'';position:absolute;bottom:-1px;right:0;left:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--primary),transparent);opacity:.5;
+}
+.av{
+  width:46px;height:46px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,#1e40af,#2563eb);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:18px;color:#fff;
+  position:relative;overflow:hidden;border:2px solid rgba(37,99,235,.3);
+}
+.av img{width:100%;height:100%;object-fit:cover;}
+.av .st{position:absolute;bottom:0;left:0;width:13px;height:13px;border-radius:50%;border:3px solid var(--card);background:var(--green);box-shadow:0 0 8px var(--green);}
+.av .st.off{background:#64748b;box-shadow:none;}
+.av.sm{width:40px;height:40px;font-size:15px;}
+.av.xs{width:34px;height:34px;font-size:12px;border-width:1.5px;}
+.av.lg{width:72px;height:72px;font-size:26px;border-width:3px;}
+
+.tb-info{flex:1;min-width:0;}
+.tb-info b{display:block;font-size:16px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tb-info small{color:var(--muted);font-size:11.5px;display:flex;align-items:center;gap:5px;margin-top:2px;font-weight:600;}
+
+.ibtn{
+  width:44px;height:44px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--card2);font-size:19px;
+  transition:.2s;flex-shrink:0;position:relative;border:1px solid var(--border);
+}
+.ibtn:active{transform:scale(.88);background:var(--primary);border-color:var(--primary);}
+
+.search-wrap{padding:10px 14px;background:var(--card);border-bottom:1px solid var(--border);}
+.search-inp{
+  width:100%;padding:12px 42px 12px 16px;
+  background:var(--bg);border:1.5px solid var(--border);
+  border-radius:24px;color:var(--text);font-size:14px;font-weight:500;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%238595b8' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:14px center;
+}
+.search-inp:focus{border-color:var(--primary);}
+
+.tabs{display:flex;background:var(--card);border-bottom:1px solid var(--border);}
+.tab{
+  flex:1;padding:14px 6px;text-align:center;
+  font-size:12.5px;font-weight:800;color:var(--muted);
+  border-bottom:3px solid transparent;transition:.25s;
+}
+.tab.on{color:var(--primary2);border-color:var(--primary2);}
+
+.screen{display:none;flex:1;overflow-y:auto;padding-bottom:20px;}
+.screen.on{display:block;}
+.sec{padding:16px 16px 8px;font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:1.5px;}
+
+.admin-banner{
+  margin:14px;padding:16px;
+  background:linear-gradient(135deg,rgba(245,158,11,.15),rgba(239,68,68,.1));
+  border:1.5px solid rgba(245,158,11,.4);border-radius:20px;
+  display:flex;align-items:center;gap:12px;
+}
+.admin-banner .crown{
+  width:48px;height:48px;border-radius:14px;
+  background:linear-gradient(135deg,#f59e0b,#ef4444);
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;box-shadow:0 8px 24px rgba(245,158,11,.4);
+}
+.admin-banner .body{flex:1;}
+.admin-banner .body b{display:block;font-size:15px;font-weight:900;margin-bottom:2px;}
+.admin-banner .body small{font-size:12px;color:var(--muted);}
+
+.item{
+  display:flex;align-items:center;gap:13px;padding:13px 16px;
+  cursor:pointer;transition:.15s;
+  border-bottom:1px solid rgba(28,39,64,.5);position:relative;
+}
+.item:active{background:var(--card2);}
+.item .body{flex:1;min-width:0;}
+.item .body b{display:block;font-size:15px;font-weight:700;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.item .body small{display:block;color:var(--muted);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;}
+.item .trail{text-align:left;flex-shrink:0;}
+.item .trail .t{font-size:11px;color:var(--muted2);font-weight:600;}
+
+.badge{
+  display:inline-block;font-size:9.5px;font-weight:900;
+  padding:2.5px 7px;border-radius:6px;margin-right:5px;
+  vertical-align:middle;
+}
+.badge.owner{background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;box-shadow:0 2px 8px rgba(245,158,11,.4);}
+.badge.admin{background:rgba(37,99,235,.25);color:#93c5fd;border:1px solid rgba(37,99,235,.4);}
+
+.empty{padding:70px 24px;text-align:center;color:var(--muted);}
+.empty .big{font-size:64px;margin-bottom:16px;opacity:.35;}
+.empty h3{font-size:16px;font-weight:800;color:var(--text);margin-bottom:8px;}
+.empty p{font-size:13px;line-height:1.7;}
+
+/* ===== Chat ===== */
+#chat{display:none;flex-direction:column;position:fixed;inset:0;z-index:60;background:var(--bg);}
+#chat.on{display:flex;}
+.chat-top{
+  display:flex;align-items:center;gap:10px;padding:11px 12px;
+  background:linear-gradient(180deg,rgba(19,27,46,.98),rgba(14,21,36,.95));
+  backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:5;
+}
+.back-btn{font-size:23px;padding:6px 10px;border-radius:12px;font-weight:300;}
+.back-btn:active{background:var(--card2);}
+
+.msgs{
+  flex:1;overflow-y:auto;padding:16px 12px 12px;
+  display:flex;flex-direction:column;gap:3px;
+  background:radial-gradient(circle at 10% 10%,rgba(37,99,235,.07),transparent 45%),
+             radial-gradient(circle at 90% 90%,rgba(139,92,246,.05),transparent 45%),
+             var(--bg);
+}
+.daysep{
+  text-align:center;margin:14px auto 8px;
+  background:var(--card2);color:var(--muted);
+  padding:5px 16px;border-radius:20px;
+  font-size:11px;font-weight:800;width:fit-content;border:1px solid var(--border);
+}
+.bub{
+  max-width:78%;padding:10px 14px;border-radius:18px;
+  font-size:14.5px;line-height:1.45;word-wrap:break-word;position:relative;
+  animation:mIn .22s ease;margin-bottom:2px;font-weight:500;
+}
+@keyframes mIn{from{opacity:0;transform:translateY(8px) scale(.96)}to{opacity:1;transform:none}}
+.bub.them{align-self:flex-start;background:var(--card2);border-bottom-right-radius:5px;border:1px solid var(--border);}
+.bub.me{
+  align-self:flex-end;
+  background:linear-gradient(135deg,#1e40af,#2563eb);
+  color:#fff;border-bottom-left-radius:5px;
+  box-shadow:0 6px 20px rgba(37,99,235,.3);
+}
+.bub .sn{font-size:11.5px;font-weight:800;color:#93c5fd;margin-bottom:4px;}
+.bub .tm{font-size:10px;opacity:.75;margin-top:5px;text-align:left;display:flex;align-items:center;gap:3px;justify-content:flex-end;}
+.bub.them .tm{color:var(--muted2);}
+.bub .tick{font-size:11px;letter-spacing:-3px;padding-left:3px;}
+.bub .tick.read{color:#7dd3fc;}
+.bub.story-reply{
+  background:linear-gradient(135deg,rgba(236,72,153,.15),rgba(139,92,246,.15));
+  border:1px solid rgba(236,72,153,.3);
+}
+
+.chat-in{
+  display:flex;gap:8px;padding:11px;
+  background:linear-gradient(0deg,rgba(19,27,46,.98),rgba(14,21,36,.95));
+  border-top:1px solid var(--border);align-items:flex-end;
+}
+.chat-in input{
+  flex:1;padding:14px 18px;background:var(--bg);
+  border:1.5px solid var(--border);border-radius:26px;
+  color:var(--text);font-size:15px;font-weight:500;
+}
+.chat-in input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+.send{
+  width:50px;height:50px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,#1e40af,#2563eb,#3b82f6);
+  color:#fff;font-size:20px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 22px rgba(37,99,235,.5);transition:.15s;
+}
+.send:active{transform:scale(.9);}
+.typing{color:var(--green);font-size:11px;font-weight:700;display:flex;align-items:center;gap:4px;}
+.typing::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.4s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ===== Modals ===== */
+.mod{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:18px;}
+.mod.on{display:flex;}
+.mod-box{
+  width:100%;max-width:460px;max-height:90vh;overflow-y:auto;
+  background:linear-gradient(180deg,var(--card),var(--bg2));
+  border:1px solid var(--border2);border-radius:24px;padding:26px;
+  animation:popIn .3s ease;box-shadow:var(--shadow);
+}
+.mod-box h2{font-size:20px;font-weight:900;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+.mod-box .muted{color:var(--muted);font-size:12.5px;margin-bottom:20px;line-height:1.6;}
+.mod-box .btn{margin-top:14px;}
+
+.pick{
+  display:flex;align-items:center;gap:12px;padding:12px;border-radius:15px;
+  margin-bottom:8px;background:var(--card2);cursor:pointer;
+  transition:.15s;border:1.5px solid transparent;
+}
+.pick:active{transform:scale(.98);}
+.pick.sel{background:rgba(37,99,235,.15);border-color:var(--primary);}
+.pick .info{flex:1;min-width:0;}
+.pick .info b{display:block;font-size:14px;font-weight:700;}
+.pick .info small{color:var(--muted);font-size:11.5px;}
+.chk{
+  width:26px;height:26px;border-radius:8px;
+  border:2px solid var(--border2);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  color:transparent;font-weight:900;transition:.15s;
+}
+.pick.sel .chk{background:var(--primary);border-color:var(--primary);color:#fff;}
+
+.av-picker{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:22px;}
+.av-big{
+  width:110px;height:110px;border-radius:50%;
+  background:linear-gradient(135deg,#1e40af,#2563eb);
+  display:flex;align-items:center;justify-content:center;
+  font-size:44px;font-weight:900;color:#fff;
+  position:relative;cursor:pointer;overflow:hidden;
+  border:3px solid rgba(37,99,235,.4);
+  box-shadow:0 0 40px rgba(37,99,235,.35);
+}
+.av-big img{width:100%;height:100%;object-fit:cover;}
+.av-big .edit{
+  position:absolute;bottom:0;right:0;width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,#2563eb,#8b5cf6);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;color:#fff;border:3px solid var(--card);
+}
+
+.toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);
+  background:linear-gradient(135deg,var(--card2),var(--card));
+  color:#fff;padding:13px 24px;border-radius:16px;
+  font-size:13.5px;font-weight:700;z-index:9999;
+  box-shadow:0 20px 50px rgba(0,0,0,.6);
+  border:1px solid var(--border2);
+  transition:.4s cubic-bezier(.2,.9,.3,1);pointer-events:none;
+  white-space:nowrap;max-width:90vw;
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+.fab{
+  position:fixed;bottom:24px;left:22px;z-index:40;
+  width:60px;height:60px;border-radius:50%;
+  background:linear-gradient(135deg,#1e40af,#2563eb,#3b82f6);
+  color:#fff;font-size:26px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 12px 35px rgba(37,99,235,.55);transition:.2s;
+}
+.fab:active{transform:scale(.9) rotate(90deg);}
+
+/* Stories Bar */
+.stories-bar{
+  display:flex;gap:14px;padding:14px;overflow-x:auto;
+  background:linear-gradient(180deg,rgba(37,99,235,.05),transparent);
+  border-bottom:1px solid var(--border);
+}
+.stories-bar::-webkit-scrollbar{display:none;}
+.story-circle{flex-shrink:0;width:72px;text-align:center;cursor:pointer;}
+.story-circle .ring{
+  width:68px;height:68px;border-radius:50%;padding:3px;
+  background:linear-gradient(135deg,#2563eb,#8b5cf6,#ec4899);
+  position:relative;transition:.2s;
+}
+.story-circle .ring.seen{background:var(--border);}
+.story-circle:active .ring{transform:scale(.94);}
+.story-circle .ring .inner{
+  width:100%;height:100%;border-radius:50%;
+  background:var(--card);overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:22px;position:relative;
+}
+.story-circle .ring .inner img,.story-circle .ring .inner video{width:100%;height:100%;object-fit:cover;}
+.story-circle .ring .plus{
+  position:absolute;bottom:0;right:0;width:24px;height:24px;border-radius:50%;
+  background:linear-gradient(135deg,#2563eb,#8b5cf6);
+  display:flex;align-items:center;justify-content:center;
+  border:3px solid var(--bg);font-size:14px;font-weight:900;color:#fff;
+}
+.story-circle small{
+  display:block;font-size:11px;margin-top:5px;color:var(--muted);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* Story Viewer */
+#storyViewer{
+  display:none;position:fixed;inset:0;z-index:500;
+  background:#000;flex-direction:column;
+}
+#storyViewer.on{display:flex;}
+.sv-progress{
+  position:absolute;top:0;right:0;left:0;height:3px;
+  display:flex;gap:3px;padding:8px 10px 0;z-index:10;
+}
+.sv-progress .bar{flex:1;height:3px;background:rgba(255,255,255,.25);border-radius:2px;overflow:hidden;}
+.sv-progress .bar.active{background:rgba(255,255,255,.9);}
+.sv-head{
+  position:absolute;top:20px;right:0;left:0;padding:0 14px;z-index:10;
+  display:flex;align-items:center;gap:10px;
+}
+.sv-head .av{width:40px;height:40px;font-size:15px;border-color:rgba(255,255,255,.4);}
+.sv-head .name{flex:1;color:#fff;}
+.sv-head .name b{display:block;font-size:14px;font-weight:800;}
+.sv-head .name small{font-size:11px;opacity:.8;}
+.sv-head .close{
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(10px);
+  color:#fff;font-size:18px;
+  display:flex;align-items:center;justify-content:center;
+}
+.sv-body{flex:1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:0;}
+.sv-body img,.sv-body video{max-width:100%;max-height:100%;object-fit:contain;}
+.sv-body .text-story{
+  width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  padding:40px;text-align:center;font-size:26px;font-weight:800;color:#fff;line-height:1.5;
+  text-shadow:0 2px 20px rgba(0,0,0,.3);
+}
+.sv-foot{
+  position:absolute;bottom:0;right:0;left:0;padding:14px;z-index:10;
+  background:linear-gradient(0deg,rgba(0,0,0,.8),transparent);
+  display:flex;flex-direction:column;gap:10px;
+}
+.sv-actions{display:flex;align-items:center;gap:10px;}
+.sv-like{
+  width:50px;height:50px;border-radius:50%;
+  background:rgba(255,255,255,.15);backdrop-filter:blur(10px);
+  color:#fff;font-size:22px;
+  display:flex;align-items:center;justify-content:center;transition:.2s;
+}
+.sv-like.liked{background:linear-gradient(135deg,#ef4444,#ec4899);animation:pop 0.3s ease;}
+@keyframes pop{0%{transform:scale(.8)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+.sv-stats{flex:1;display:flex;align-items:center;gap:14px;color:#fff;font-size:13px;font-weight:700;}
+.sv-stats .stat{display:flex;align-items:center;gap:5px;opacity:.9;cursor:pointer;}
+.sv-reply{display:flex;gap:8px;}
+.sv-reply input{
+  flex:1;padding:13px 18px;border-radius:24px;
+  background:rgba(255,255,255,.15);backdrop-filter:blur(10px);
+  color:#fff;font-size:14px;border:1px solid rgba(255,255,255,.2);
+}
+.sv-reply input::placeholder{color:rgba(255,255,255,.6);}
+.sv-reply button{
+  width:48px;height:48px;border-radius:50%;
+  background:linear-gradient(135deg,#2563eb,#8b5cf6);
+  color:#fff;font-size:18px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 18px rgba(37,99,235,.5);
+}
+
+.sv-viewers-list{max-height:50vh;overflow-y:auto;}
+.sv-viewer-row{
+  display:flex;align-items:center;gap:11px;
+  padding:10px;border-radius:12px;margin-bottom:6px;background:var(--card2);
+}
+.sv-viewer-row .info{flex:1;}
+.sv-viewer-row .info b{display:block;font-size:13.5px;font-weight:700;}
+.sv-viewer-row .info small{color:var(--muted);font-size:11px;}
+.sv-viewer-row .heart{color:#ef4444;font-size:18px;}
+
+.color-chip{
+  width:44px;height:44px;border-radius:50%;cursor:pointer;
+  border:3px solid transparent;transition:.15s;
+}
+.color-chip.sel{border-color:#fff;}
+
+.story-upload-area{display:flex;gap:8px;margin-bottom:14px;}
+.story-tab-btn{
+  flex:1;padding:12px 8px;border-radius:12px;
+  background:var(--card2);font-size:13px;font-weight:700;
+  border:1.5px solid transparent;transition:.2s;
+}
+.story-tab-btn.on{background:rgba(37,99,235,.15);border-color:var(--primary);color:#93c5fd;}
+
+video.preview-vid{width:100%;max-height:200px;border-radius:14px;background:#000;margin-top:8px;}
+img.preview-img{width:100%;max-height:200px;border-radius:14px;object-fit:cover;margin-top:8px;}
+
+.find-result-box{
+  background:linear-gradient(135deg,rgba(37,99,235,.12),rgba(139,92,246,.08));
+  border:1.5px solid rgba(37,99,235,.35);border-radius:18px;padding:18px;margin-top:16px;
+  animation:popIn .3s ease;
+}
+.find-result-err{
+  border-radius:18px;padding:18px;margin-top:16px;
+  border:1.5px solid rgba(239,68,68,.4);background:rgba(239,68,68,.08);
+  text-align:center;color:#f87171;font-weight:700;
+}
+.find-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.find-head .info{flex:1;}
+.find-head .info b{font-size:15px;font-weight:800;display:block;}
+.find-head .info small{color:var(--muted);font-size:12px;}
+.find-btns{display:flex;gap:8px;}
+.find-btns button{flex:1;padding:11px;border-radius:12px;font-size:13px;font-weight:800;}
+
+.member-row{
+  display:flex;align-items:center;gap:11px;padding:11px;border-radius:14px;
+  margin-bottom:6px;background:var(--card2);
+}
+.member-row .info{flex:1;min-width:0;}
+.member-row .info b{display:block;font-size:13.5px;}
+.member-row .info small{color:var(--muted);font-size:11px;}
+.member-row .mini-btn{
+  width:34px;height:34px;border-radius:10px;background:var(--bg);font-size:14px;
+  display:flex;align-items:center;justify-content:center;
+}
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div id="login">
+  <div class="login-box">
+    <div class="crown-wrap"><div class="crown-inner">👑</div></div>
+    <div class="login-title">Yassin Chat</div>
+    <div class="login-sub">منصة تواصل احترافية · خاصة · آمنة</div>
+
+    <div class="av-picker" id="loginAvPicker" style="display:none;">
+      <div class="av-big" id="loginAvBig" onclick="document.getElementById('loginAvFile').click()">
+        <span id="loginAvTxt">?</span>
+        <div class="edit">📷</div>
+      </div>
+      <input type="file" id="loginAvFile" accept="image/*" hidden>
+      <small style="color:var(--muted);font-size:12px;">اضغط لإضافة صورتك الشخصية</small>
+    </div>
+
+    <div class="fld"><label>الاسم الكامل</label><input id="lgN" placeholder="اكتب اسمك" maxlength="20"></div>
+    <div class="fld"><label>رقم الموبايل</label><input id="lgP" placeholder="01xxxxxxxxx" maxlength="11" inputmode="numeric"></div>
+    <div class="fld"><label>كلمة السر (اختياري)</label><input id="lgW" type="password" placeholder="اتركها فاضية للدخول السريع" maxlength="30"></div>
+    <button class="btn btn-grad" id="lgBtn">دخول آمن 🚀</button>
+    <div class="err-msg" id="lgErr"></div>
+  </div>
+</div>
+
+<!-- App -->
+<div id="app">
+  <div class="topbar">
+    <div class="av" id="myAv" onclick="openProfile()">?</div>
+    <div class="tb-info">
+      <b id="myN">-</b>
+      <small><span style="width:6px;height:6px;border-radius:50%;background:#10b981;display:inline-block;box-shadow:0 0 6px #10b981;"></span> متصل</small>
+    </div>
+    <button class="ibtn" id="btnAdd" title="إضافة">➕</button>
+    <button class="ibtn" id="btnGrp" title="جروب">👥</button>
+    <button class="ibtn" id="btnMenu" title="القائمة">☰</button>
+  </div>
+
+  <div class="search-wrap">
+    <input class="search-inp" id="searchInp" placeholder="ابحث في محادثاتك...">
+  </div>
+
+  <div class="tabs">
+    <div class="tab on" data-tab="chats">💬 المحادثات</div>
+    <div class="tab" data-tab="contacts">👤 جهات الاتصال</div>
+    <div class="tab" data-tab="stories">✨ الحالات</div>
+  </div>
+
+  <div class="screen on" id="scr-chats">
+    <div id="adminBanner"></div>
+    <div class="sec">👥 الجروبات</div>
+    <div id="grpList"></div>
+    <div class="sec">💬 المحادثات</div>
+    <div id="chtList"></div>
+  </div>
+
+  <div class="screen" id="scr-contacts">
+    <div id="adminUsers"></div>
+    <div class="sec">📇 جهات اتصالي</div>
+    <div id="cntList"></div>
+  </div>
+
+  <div class="screen" id="scr-stories">
+    <div class="stories-bar" id="storiesBar"></div>
+    <div style="padding:14px;">
+      <button class="btn btn-grad" id="btnStory">✨ أضف حالة جديدة</button>
+    </div>
+    <div class="sec">✨ الحالات النشطة</div>
+    <div id="styList"></div>
+  </div>
+</div>
+
+<!-- Chat -->
+<div id="chat">
+  <div class="chat-top">
+    <button class="back-btn" id="chatBack">←</button>
+    <div class="av sm" id="chAv">?</div>
+    <div class="tb-info">
+      <b id="chT">-</b>
+      <small id="chS">-</small>
+    </div>
+    <button class="ibtn" id="chatInfo" style="display:none">ℹ️</button>
+  </div>
+  <div class="msgs" id="msgs"></div>
+  <div class="chat-in">
+    <input id="msgInp" placeholder="اكتب رسالة..." autocomplete="off">
+    <button class="send" id="sendBtn">➤</button>
+  </div>
+</div>
+
+<button class="fab" id="fab">✏️</button>
+
+<!-- Modals -->
+<div class="mod" id="mAdd">
+  <div class="mod-box">
+    <h2>➕ إضافة جهة اتصال</h2>
+    <div class="muted">اكتب رقم الموبايل عشان تلاقي الشخص المسجل</div>
+    <div class="fld"><label>رقم الموبايل</label><input id="addPhone" placeholder="01xxxxxxxxx" maxlength="11" inputmode="numeric"></div>
+    <button class="btn btn-grad" id="searchContact">🔍 بحث</button>
+    <div id="findResult"></div>
+    <button class="btn btn-ghost" onclick="closeMod('mAdd')">إغلاق</button>
+  </div>
+</div>
+
+<div class="mod" id="mGroup">
+  <div class="mod-box">
+    <h2>👥 جروب جديد</h2>
+    <div class="muted">سمّي الجروب واختار من جهات اتصالك</div>
+    <div class="fld"><label>اسم الجروب</label><input id="gN" placeholder="مثلاً: الفريق" maxlength="30"></div>
+    <div class="sec" style="padding:8px 0">اختار الأعضاء</div>
+    <div id="gPick"></div>
+    <button class="btn btn-grad" id="gCreate">✅ إنشاء</button>
+    <button class="btn btn-ghost" onclick="closeMod('mGroup')">إلغاء</button>
+  </div>
+</div>
+
+<div class="mod" id="mMembers">
+  <div class="mod-box">
+    <h2 id="memT">👥 الأعضاء</h2>
+    <div class="muted" id="memS"></div>
+    <div id="memL"></div>
+    <button class="btn btn-ghost" onclick="closeMod('mMembers')">إغلاق</button>
+  </div>
+</div>
+
+<div class="mod" id="mProf">
+  <div class="mod-box">
+    <h2>👤 الملف الشخصي</h2>
+    <div class="muted">عدّل صورتك وبياناتك</div>
+    <div class="av-picker">
+      <div class="av-big" id="profAv" onclick="document.getElementById('profAvFile').click()">
+        <span id="profAvTxt">?</span>
+        <div class="edit">📷</div>
+      </div>
+      <input type="file" id="profAvFile" accept="image/*" hidden>
+    </div>
+    <div class="fld"><label>الاسم</label><input id="profN" maxlength="20"></div>
+    <div class="fld"><label>النبذة الشخصية</label><textarea id="profBio" rows="2" maxlength="100"></textarea></div>
+    <button class="btn btn-grad" id="profSave">💾 حفظ التغييرات</button>
+    <button class="btn btn-ghost" onclick="closeMod('mProf')">إلغاء</button>
+  </div>
+</div>
+
+<div class="mod" id="mStory">
+  <div class="mod-box">
+    <h2>✨ إضافة حالة</h2>
+    <div class="muted">اختر نوع الحالة (تختفي بعد 24 ساعة)</div>
+
+    <div class="story-upload-area">
+      <button class="story-tab-btn on" data-stype="text">📝 نص</button>
+      <button class="story-tab-btn" data-stype="image">🖼️ صورة</button>
+      <button class="story-tab-btn" data-stype="video">🎥 فيديو</button>
+    </div>
+
+    <div id="storyTextArea">
+      <div class="fld"><label>نص الحالة</label><textarea id="styTxt" rows="4" maxlength="200" placeholder="اكتب حالتك..."></textarea></div>
+      <div class="fld"><label>لون الخلفية</label><div id="styColors" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;"></div></div>
+    </div>
+
+    <div id="storyImageArea" style="display:none;">
+      <div class="fld"><label>صورة الحالة</label><input type="file" id="styImgFile" accept="image/*" style="padding:10px;background:var(--bg);border-radius:12px;"></div>
+      <img id="styImgPreview" class="preview-img" style="display:none;">
+    </div>
+
+    <div id="storyVideoArea" style="display:none;">
+      <div class="fld"><label>فيديو الحالة (حد أقصى 1.5 ميجا)</label><input type="file" id="styVidFile" accept="video/*" style="padding:10px;background:var(--bg);border-radius:12px;"></div>
+      <video id="styVidPreview" class="preview-vid" style="display:none;" controls></video>
+    </div>
+
+    <button class="btn btn-grad" id="styPost">📤 نشر الحالة</button>
+    <button class="btn btn-ghost" onclick="closeMod('mStory')">إلغاء</button>
+  </div>
+</div>
+
+<div class="mod" id="mMenu">
+  <div class="mod-box">
+    <h2>☰ القائمة</h2>
+    <div class="muted" id="menuMe"></div>
+    <button class="btn btn-ghost" onclick="closeMod('mMenu');openProfile()">👤 الملف الشخصي</button>
+    <button class="btn btn-ghost" onclick="closeMod('mMenu');document.querySelector('[data-tab=\'contacts\']').click()">📇 جهات الاتصال</button>
+    <button class="btn btn-ghost" id="btnMyContacts">⚙️ إدارة الأسماء المخصصة</button>
+    <button class="btn btn-danger" id="btnLogout">🚪 تسجيل خروج</button>
+    <button class="btn btn-ghost" onclick="closeMod('mMenu')">إغلاق</button>
+  </div>
+</div>
+
+<div class="mod" id="mContacts">
+  <div class="mod-box">
+    <h2>⚙️ إدارة الأسماء</h2>
+    <div class="muted">احذف جهات الاتصال</div>
+    <div id="myContactsList"></div>
+    <button class="btn btn-ghost" onclick="closeMod('mContacts')">إغلاق</button>
+  </div>
+</div>
+
+<div class="mod" id="mViewers">
+  <div class="mod-box">
+    <h2>👁️ من شاهد حالتك</h2>
+    <div class="muted" id="viewersSub"></div>
+    <div class="sv-viewers-list" id="viewersList"></div>
+    <button class="btn btn-ghost" onclick="closeMod('mViewers')">إغلاق</button>
+  </div>
+</div>
+
+<!-- Story Viewer -->
+<div id="storyViewer">
+  <div class="sv-progress" id="svProgress"><div class="bar active"></div></div>
+  <div class="sv-head">
+    <div class="av" id="svAv">?</div>
+    <div class="name">
+      <b id="svName">-</b>
+      <small id="svTime">-</small>
+    </div>
+    <button class="close" id="svClose">✕</button>
+  </div>
+  <div class="sv-body" id="svBody"></div>
+  <div class="sv-foot">
+    <div class="sv-actions">
+      <button class="sv-like" id="svLike">🤍</button>
+      <div class="sv-stats">
+        <div class="stat" id="svViews">👁️ 0</div>
+        <div class="stat" id="svLikes">❤️ 0</div>
+        <div class="stat" id="svViewersBtn" style="display:none;">📋 المشاهدون</div>
+      </div>
+    </div>
+    <div class="sv-reply">
+      <input id="svReplyInp" placeholder="اكتب تعليقك...">
+      <button id="svReplyBtn">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, push, onValue, set, update, remove, onDisconnect, get }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBC9_eXaJRY8utrsiG5X6ZG2t4_NGCl2a0",
+  authDomain: "yassin-2ca7f.firebaseapp.com",
+  databaseURL: "https://yassin-2ca7f-default-rtdb.firebaseio.com",
+  projectId: "yassin-2ca7f",
+  storageBucket: "yassin-2ca7f.firebasestorage.app",
+  messagingSenderId: "798821837398",
+  appId: "1:798821837398:web:e7e53451a955f3e3b129f7"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const OWNER_PHONE = "01213771957";
+
+let ME = null;
+let users = {}, groups = {}, stories = {}, myContacts = {};
+let currentChat = null, unsubMsgs = null, unsubTyping = null, typingTimer = null;
+let loginAvatarData = "", profAvatarData = "";
+let currentStoryUid = null, storyType = "text";
+let storyImageData = "", storyVideoData = "";
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const initials = n => (n || "?").trim().split(/\s+/).map(w=>w[0]).slice(0,2).join("").toUpperCase();
+const fmtTime = t => new Date(t).toLocaleTimeString("ar-EG",{hour:"2-digit",minute:"2-digit"});
+const fmtDate = t => {
+  const d=new Date(t),n=new Date();
+  if(d.toDateString()===n.toDateString())return "اليوم";
+  const y=new Date(n);y.setDate(n.getDate()-1);
+  if(d.toDateString()===y.toDateString())return "أمس";
+  return d.toLocaleDateString("ar-EG",{day:"numeric",month:"short"});
+};
+const timeAgo = t => {
+  const s = Math.floor((Date.now()-t)/1000);
+  if (s < 60) return "الآن";
+  if (s < 3600) return `قبل ${Math.floor(s/60)} دقيقة`;
+  if (s < 86400) return `قبل ${Math.floor(s/3600)} ساعة`;
+  return `قبل ${Math.floor(s/86400)} يوم`;
+};
+function toast(msg){
+  let t = document.querySelector(".toast");
+  if(!t){t=document.createElement("div");t.className="toast";document.body.appendChild(t);}
+  t.textContent=msg;t.classList.add("show");
+  clearTimeout(t._tm);t._tm=setTimeout(()=>t.classList.remove("show"),2300);
+}
+window.closeMod = function(id){ const el = $(id); if (el) el.classList.remove("on"); };
+function openMod(id){ const el = $(id); if (el) el.classList.add("on"); }
+
+/* ============ Login ============ */
+setTimeout(()=>{ $("loginAvPicker").style.display="flex"; }, 100);
+$("loginAvFile").onchange = function(e){
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    loginAvatarData = ev.target.result;
+    $("loginAvBig").innerHTML = `<img src="${loginAvatarData}"><div class="edit">📷</div>`;
+  };
+  r.readAsDataURL(f);
+};
+$("lgBtn").onclick = doLogin;
+["lgN","lgP","lgW"].forEach(id => $(id).addEventListener("keydown", e => { if(e.key==="Enter") doLogin(); }));
+
+async function doLogin(){
+  const name = $("lgN").value.trim();
+  const phone = $("lgP").value.trim();
+  const pass = $("lgW").value.trim();
+  $("lgErr").textContent = "";
+  if (name.length < 2) { $("lgErr").textContent = "اكتب اسم صحيح"; return; }
+  if (!/^01\d{9}$/.test(phone)) { $("lgErr").textContent = "رقم غلط"; return; }
+  $("lgBtn").disabled = true; $("lgBtn").textContent = "⏳ جارٍ الدخول...";
+  try {
+    const uid = "u_" + phone;
+    const snap = await get(ref(db, "users/" + uid));
+    const existing = snap.val();
+    if (existing && existing.pass && existing.pass !== pass){
+      $("lgErr").textContent = "كلمة السر غلط";
+      $("lgBtn").disabled = false; $("lgBtn").textContent = "دخول آمن 🚀";
+      return;
+    }
+    const isOwner = phone === OWNER_PHONE;
+    const avatar = loginAvatarData || (existing && existing.avatar) || "";
+    await set(ref(db, "users/" + uid), {
+      uid, name, phone, isOwner,
+      pass: pass || (existing && existing.pass) || "",
+      online: true, lastSeen: Date.now(), avatar,
+      bio: (existing && existing.bio) || ""
+    });
+    ME = { uid, name, phone, isOwner, avatar, bio: (existing && existing.bio) || "" };
+    localStorage.setItem("yassin_chat_me", JSON.stringify({ name, phone, pass }));
+    enterApp();
+  } catch(err){
+    $("lgErr").textContent = "خطأ: " + err.message;
+    $("lgBtn").disabled = false; $("lgBtn").textContent = "دخول آمن 🚀";
+  }
+}
+
+const savedMe = localStorage.getItem("yassin_chat_me");
+if (savedMe){
+  try {
+    const s = JSON.parse(savedMe);
+    $("lgN").value = s.name||""; $("lgP").value = s.phone||""; $("lgW").value = s.pass||"";
+    setTimeout(()=>{ doLogin(); }, 150);
+  } catch(e){}
+}
+
+/* ============ Enter App ============ */
+function enterApp(){
+  $("login").style.display = "none";
+  $("app").classList.add("on");
+  renderMyAvatar();
+  $("myN").innerHTML = esc(ME.name) + (ME.isOwner?' <span class="badge owner">👑</span>':'');
+  $("menuMe").textContent = ME.name + " · " + ME.phone;
+
+  const onRef = ref(db, "users/" + ME.uid + "/online");
+  set(onRef, true);
+  onDisconnect(onRef).set(false);
+  onDisconnect(ref(db, "users/" + ME.uid + "/lastSeen")).set(Date.now());
+
+  onValue(ref(db, "users"), snap => {
+    users = snap.val() || {};
+    const meU = users[ME.uid];
+    if (meU){ ME.name = meU.name; ME.avatar = meU.avatar||""; ME.bio = meU.bio||""; renderMyAvatar();
+      $("myN").innerHTML = esc(ME.name) + (ME.isOwner?' <span class="badge owner">👑</span>':''); }
+    renderAll();
+  });
+  onValue(ref(db, "groups"), snap => { groups = snap.val()||{}; renderAll(); refreshChatHeader(); });
+  onValue(ref(db, "stories"), snap => { stories = snap.val()||{}; renderStories(); });
+  onValue(ref(db, "contacts/" + ME.uid), snap => { myContacts = snap.val()||{}; renderAll(); });
+}
+
+function renderMyAvatar(){
+  const el = $("myAv");
+  if (ME.avatar) el.innerHTML = `<img src="${ME.avatar}"><div class="st"></div>`;
+  else el.innerHTML = `${esc(initials(ME.name))}<div class="st"></div>`;
+}
+
+document.querySelectorAll(".tab").forEach(t => {
+  t.onclick = () => {
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));
+    document.querySelectorAll(".screen").forEach(x=>x.classList.remove("on"));
+    t.classList.add("on");
+    $("scr-" + t.dataset.tab).classList.add("on");
+  };
+});
+
+function renderAll(){ renderChats(); renderGroups(); renderContacts(); renderAdminPanel(); }
+
+function renderAdminPanel(){
+  const banner = $("adminBanner");
+  banner.innerHTML = "";
+  if (ME.isOwner){
+    banner.innerHTML = `
+      <div class="admin-banner">
+        <div class="crown">👑</div>
+        <div class="body">
+          <b>مرحباً يا صاحب التطبيق</b>
+          <small>عندك صلاحيات كاملة على كل المستخدمين</small>
+        </div>
+      </div>
+    `;
+  }
+
+  const box = $("adminUsers");
+  box.innerHTML = "";
+  if (!ME.isOwner) return;
+
+  const allUsers = Object.values(users).filter(u => u.uid !== ME.uid);
+  if (!allUsers.length) return;
+
+  box.innerHTML = `
+    <div class="sec" style="color:var(--gold);">👑 كل المستخدمين (${allUsers.length})</div>
+    ${allUsers.map(u => {
+      const av = u.avatar ? `<img src="${u.avatar}">` : esc(initials(u.name));
+      return `
+        <div class="item" onclick="openPrivate('${u.uid}')">
+          <div class="av">${av}<div class="st ${u.online?'':'off'}"></div></div>
+          <div class="body">
+            <b>${esc(u.name)} ${u.isOwner?'<span class="badge owner">👑</span>':''}</b>
+            <small>${esc(u.phone)} · ${u.online?'🟢 متصل':'⚪ '+fmtTime(u.lastSeen||Date.now())}</small>
+          </div>
+        </div>
+      `;
+    }).join("")}
+  `;
+}
+
+function renderChats(){
+  const box = $("chtList");
+  const search = ($("searchInp").value||"").toLowerCase();
+  let list = Object.keys(myContacts).map(uid => {
+    const u = users[uid]; if (!u) return null;
+    const alias = myContacts[uid].alias || u.name;
+    return { uid, user: u, name: alias, alias };
+  }).filter(Boolean);
+
+  if (ME.isOwner){
+    const existing = new Set(list.map(c=>c.uid));
+    Object.values(users).forEach(u => {
+      if (u.uid === ME.uid || existing.has(u.uid)) return;
+      list.push({ uid: u.uid, user: u, name: u.name, alias: "" });
+    });
+  }
+
+  if (search) list = list.filter(c => c.name.toLowerCase().includes(search));
+  list.sort((a,b)=>(b.user.online?1:0)-(a.user.online?1:0) || (b.user.lastSeen||0)-(a.user.lastSeen||0));
+
+  if (!list.length){
+    box.innerHTML = `<div class="empty"><div class="big">💬</div><h3>لا توجد محادثات</h3><p>اضغط ➕ لإضافة جهة اتصال</p></div>`;
+    return;
+  }
+  box.innerHTML = list.map(c => {
+    const av = c.user.avatar ? `<img src="${c.user.avatar}">` : esc(initials(c.name));
+    return `
+      <div class="item" onclick="openPrivate('${c.uid}')">
+        <div class="av">${av}<div class="st ${c.user.online?'':'off'}"></div></div>
+        <div class="body">
+          <b>${esc(c.name)} ${c.user.isOwner?'<span class="badge owner">👑 الإدارة</span>':''}</b>
+          <small>${c.user.online?'🟢 متصل الآن':(c.user.bio?esc(c.user.bio).slice(0,30):'اضغط للدردشة')}</small>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderGroups(){
+  const box = $("grpList");
+  const search = ($("searchInp").value||"").toLowerCase();
+  let list = Object.values(groups).filter(g => g.members && g.members[ME.uid]);
+  if (search) list = list.filter(g => (g.name||"").toLowerCase().includes(search));
+  if (!list.length){
+    box.innerHTML = `<div class="empty" style="padding:24px;"><small style="color:var(--muted)">لا توجد جروبات — اضغط 👥</small></div>`;
+    return;
+  }
+  box.innerHTML = list.map(g => {
+    const role = g.members[ME.uid];
+    const r = role==="admin"?'<span class="badge admin">مشرف</span>':'';
+    return `
+      <div class="item" onclick="openGroup('${g.id}')">
+        <div class="av" style="background:linear-gradient(135deg,#8b5cf6,#ec4899)">👥</div>
+        <div class="body"><b>${esc(g.name)} ${r}</b><small>${Object.keys(g.members).length} عضو</small></div>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderContacts(){
+  const box = $("cntList");
+  const search = ($("searchInp").value||"").toLowerCase();
+  let list = Object.keys(myContacts).map(uid => {
+    const u = users[uid]; if (!u) return null;
+    return { uid, user: u, alias: myContacts[uid].alias || "" };
+  }).filter(Boolean);
+
+  if (ME.isOwner){
+    const existing = new Set(list.map(c=>c.uid));
+    Object.values(users).forEach(u => {
+      if (u.uid === ME.uid || existing.has(u.uid)) return;
+      list.push({ uid: u.uid, user: u, alias: "" });
+    });
+  }
+
+  if (search) list = list.filter(c => ((c.alias||c.user.name).toLowerCase().includes(search)) || c.user.phone.includes(search));
+  list.sort((a,b)=> (a.alias||a.user.name).localeCompare(b.alias||b.user.name));
+
+  if (!list.length){
+    box.innerHTML = `<div class="empty"><div class="big">📇</div><h3>لا توجد جهات اتصال</h3><p>اضغط ➕ وابحث برقم</p></div>`;
+    return;
+  }
+  box.innerHTML = list.map(c => {
+    const dispName = c.alias || c.user.name;
+    const av = c.user.avatar ? `<img src="${c.user.avatar}">` : esc(initials(dispName));
+    return `
+      <div class="item" onclick="openPrivate('${c.uid}')">
+        <div class="av">${av}<div class="st ${c.user.online?'':'off'}"></div></div>
+        <div class="body">
+          <b>${esc(dispName)}${c.user.isOwner?' <span class="badge owner">👑 الإدارة</span>':''}</b>
+          <small>${esc(c.user.phone)} ${c.user.bio?'· '+esc(c.user.bio).slice(0,25):''}</small>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderStories(){
+  const now = Date.now();
+  const active = Object.entries(stories).filter(([uid,s]) => now-(s.time||0) < 24*3600*1000);
+
+  const bar = $("storiesBar");
+  let barHtml = `
+    <div class="story-circle" onclick="openStoryModal()">
+      <div class="ring"><div class="inner">${ME.avatar?`<img src="${ME.avatar}">`:esc(initials(ME.name))}<div class="plus">+</div></div></div>
+      <small>حالتي</small>
+    </div>
+  `;
+  active.sort((a,b)=>(b[1].time||0)-(a[1].time||0));
+  barHtml += active.map(([uid,s]) => {
+    if (uid === ME.uid) return "";
+    const u = users[uid]||{name:"?"};
+    const inner = s.type === "image" && s.media ? `<img src="${s.media}">` :
+                  s.type === "video" && s.media ? `<video src="${s.media}" muted></video>` :
+                  `<span style="color:#fff;font-size:20px;">📝</span>`;
+    const seen = s.seenBy && s.seenBy[ME.uid];
+    return `
+      <div class="story-circle" onclick="openStory('${uid}')">
+        <div class="ring ${seen?'seen':''}"><div class="inner">${inner}</div></div>
+        <small>${esc(u.name)}</small>
+      </div>
+    `;
+  }).join("");
+  bar.innerHTML = barHtml;
+
+  const box = $("styList");
+  if (!active.length){
+    box.innerHTML = `<div class="empty"><div class="big">✨</div><h3>لا توجد حالات</h3><p>كن أول من يشارك لحظة</p></div>`;
+    return;
+  }
+  box.innerHTML = active.map(([uid,s]) => {
+    const u = users[uid]||{name:"?"};
+    const av = u.avatar ? `<img src="${u.avatar}">` : esc(initials(u.name));
+    let preview = "";
+    if (s.type === "image") preview = "🖼️ صورة";
+    else if (s.type === "video") preview = "🎥 فيديو";
+    else preview = esc((s.text||"").slice(0,40));
+    const viewsCount = s.seenBy ? Object.keys(s.seenBy).length : 0;
+    const likesCount = s.likes ? Object.keys(s.likes).length : 0;
+    return `
+      <div class="item" onclick="openStory('${uid}')">
+        <div class="av">${av}</div>
+        <div class="body">
+          <b>${esc(u.name)} ${u.isOwner?'<span class="badge owner">👑</span>':''}</b>
+          <small>${preview} · 👁️ ${viewsCount} · ❤️ ${likesCount}</small>
+        </div>
+        <div class="trail"><span class="t">${timeAgo(s.time)}</span></div>
+      </div>
+    `;
+  }).join("");
+}
+
+/* ============ Story Modal ============ */
+window.openStoryModal = function(){
+  storyType = "text";
+  storyImageData = ""; storyVideoData = "";
+  $("styTxt").value = "";
+  $("styImgPreview").style.display = "none";
+  $("styVidPreview").style.display = "none";
+  $("styImgFile").value = ""; $("styVidFile").value = "";
+
+  document.querySelectorAll(".story-tab-btn").forEach(b => b.classList.remove("on"));
+  document.querySelector('[data-stype="text"]').classList.add("on");
+  switchStoryType("text");
+
+  const COLORS = ["#1e40af","#2563eb","#3b82f6","#8b5cf6","#ec4899","#ef4444","#f59e0b","#10b981","#06b6d4","#0f172a"];
+  $("styColors").innerHTML = COLORS.map((c,i) => `
+    <div data-c="${c}" class="color-chip ${i===0?'sel':''}" onclick="pickColor(this)" style="background:${c};"></div>
+  `).join("");
+  window._pickedColor = COLORS[0];
+  openMod("mStory");
+};
+$("btnStory").onclick = openStoryModal;
+
+function switchStoryType(type){
+  storyType = type;
+  $("storyTextArea").style.display = type==="text" ? "block" : "none";
+  $("storyImageArea").style.display = type==="image" ? "block" : "none";
+  $("storyVideoArea").style.display = type==="video" ? "block" : "none";
+}
+document.querySelectorAll(".story-tab-btn").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".story-tab-btn").forEach(x=>x.classList.remove("on"));
+    btn.classList.add("on");
+    switchStoryType(btn.dataset.stype);
+  };
+});
+
+window.pickColor = function(el){
+  document.querySelectorAll(".color-chip").forEach(x=>x.classList.remove("sel"));
+  el.classList.add("sel");
+  window._pickedColor = el.dataset.c;
+};
+
+$("styImgFile").onchange = function(e){
+  const f = e.target.files[0]; if(!f) return;
+  if (f.size > 2*1024*1024) return toast("⚠️ الصورة كبيرة (2 ميجا كحد أقصى)");
+  const r = new FileReader();
+  r.onload = ev => { storyImageData = ev.target.result;
+    const p = $("styImgPreview"); p.src = storyImageData; p.style.display = "block"; };
+  r.readAsDataURL(f);
+};
+$("styVidFile").onchange = function(e){
+  const f = e.target.files[0]; if(!f) return;
+  if (f.size > 1.5*1024*1024) return toast("⚠️ الفيديو كبير (1.5 ميجا كحد أقصى)");
+  const r = new FileReader();
+  r.onload = ev => { storyVideoData = ev.target.result;
+    const p = $("styVidPreview"); p.src = storyVideoData; p.style.display = "block"; };
+  r.readAsDataURL(f);
+};
+
+$("styPost").onclick = async function(){
+  const data = { time: Date.now(), name: ME.name, type: storyType };
+  if (storyType === "text"){
+    const text = $("styTxt").value.trim();
+    if (!text) return toast("اكتب حاجة");
+    data.text = text;
+    data.color = window._pickedColor || "#1e40af";
+  } else if (storyType === "image"){
+    if (!storyImageData) return toast("اختر صورة");
+    data.media = storyImageData;
+  } else if (storyType === "video"){
+    if (!storyVideoData) return toast("اختر فيديو");
+    data.media = storyVideoData;
+  }
+  await set(ref(db, "stories/" + ME.uid), data);
+  closeMod("mStory");
+  toast("✅ تم نشر الحالة");
+  document.querySelector('[data-tab="stories"]').click();
+};
+
+/* ============ Story Viewer ============ */
+window.openStory = function(uid){
+  const s = stories[uid]; if (!s) { toast("الحالة غير متاحة"); return; }
+  const u = users[uid] || { name:"?" };
+  currentStoryUid = uid;
+
+  const svAv = $("svAv");
+  svAv.innerHTML = u.avatar ? `<img src="${u.avatar}">` : esc(initials(u.name));
+  $("svName").textContent = u.name + (u.isOwner ? " 👑" : "");
+  $("svTime").textContent = timeAgo(s.time);
+
+  $("svProgress").innerHTML = `<div class="bar active"></div>`;
+
+  const body = $("svBody");
+  body.innerHTML = "";
+  if (s.type === "image" && s.media){
+    body.innerHTML = `<img src="${s.media}" alt="">`;
+  } else if (s.type === "video" && s.media){
+    body.innerHTML = `<video src="${s.media}" autoplay controls playsinline></video>`;
+  } else {
+    const col = s.color || "#1e40af";
+    body.innerHTML = `<div class="text-story" style="background:linear-gradient(135deg,${col},${col}cc);">${esc(s.text||"")}</div>`;
+  }
+
+  const liked = s.likes && s.likes[ME.uid];
+  const likeBtn = $("svLike");
+  likeBtn.textContent = liked ? "❤️" : "🤍";
+  likeBtn.classList.toggle("liked", !!liked);
+
+  const viewsCount = s.seenBy ? Object.keys(s.seenBy).length : 0;
+  const likesCount = s.likes ? Object.keys(s.likes).length : 0;
+  $("svViews").textContent = `👁️ ${viewsCount}`;
+  $("svLikes").textContent = `❤️ ${likesCount}`;
+  $("svViewersBtn").style.display = (uid === ME.uid) ? "flex" : "none";
+
+  if (uid !== ME.uid){
+    update(ref(db, "stories/" + uid + "/seenBy/" + ME.uid), Date.now()).catch(()=>{});
+  }
+
+  $("storyViewer").classList.add("on");
+
+  likeBtn.onclick = async function(){
+    const isLiked = s.likes && s.likes[ME.uid];
+    if (isLiked){
+      await remove(ref(db, "stories/" + uid + "/likes/" + ME.uid));
+      toast("تم إزالة الإعجاب");
+    } else {
+      await set(ref(db, "stories/" + uid + "/likes/" + ME.uid), Date.now());
+      toast("❤️ أعجبك");
+    }
+    likeBtn.textContent = isLiked ? "🤍" : "❤️";
+    likeBtn.classList.toggle("liked", !isLiked);
+  };
+
+  $("svReplyBtn").onclick = sendStoryReply;
+  $("svReplyInp").onkeydown = function(e){ if(e.key==="Enter") sendStoryReply(); };
+};
+
+async function sendStoryReply(){
+  const txt = $("svReplyInp").value.trim();
+  if (!txt) return;
+  const cid = [ME.uid, currentStoryUid].sort().join("__");
+  await push(ref(db, "messages/private/" + cid), {
+    from: ME.uid, name: ME.name,
+    text: "💬 رداً على حالتك: " + txt,
+    time: Date.now(), read: false, storyReply: true
+  });
+  $("svReplyInp").value = "";
+  toast("✅ تم إرسال التعليق");
+}
+
+$("svClose").onclick = function(){ $("storyViewer").classList.remove("on"); };
+$("svViewersBtn").onclick = function(){ showViewers(); };
+
+window.showViewers = function(){
+  const s = stories[currentStoryUid]; if (!s) return;
+  const seen = s.seenBy || {};
+  const likes = s.likes || {};
+  const ids = Object.keys(seen);
+
+  $("viewersSub").textContent = `${ids.length} شخص شاهد حالتك`;
+  const box = $("viewersList");
+  if (!ids.length){
+    box.innerHTML = `<div style="text-align:center;color:var(--muted);padding:20px;">لسه محدش شاف حالتك</div>`;
+  } else {
+    box.innerHTML = ids.map(uid => {
+      const u = users[uid] || { name:"?" };
+      const av = u.avatar ? `<img src="${u.avatar}">` : esc(initials(u.name));
+      const hasLike = likes[uid];
+      return `
+        <div class="sv-viewer-row">
+          <div class="av xs">${av}</div>
+          <div class="info"><b>${esc(u.name)}</b><small>${fmtTime(seen[uid]||Date.now())}</small></div>
+          ${hasLike ? '<span class="heart">❤️</span>' : ''}
+        </div>
+      `;
+    }).join("");
+  }
+  openMod("mViewers");
+};
+
+/* ============ Add Contact ============ */
+$("btnAdd").onclick = function(){
+  $("addPhone").value = ""; $("findResult").innerHTML = "";
+  openMod("mAdd");
+  setTimeout(()=>$("addPhone").focus(), 200);
+};
+$("searchContact").onclick = function(){
+  const phone = $("addPhone").value.trim();
+  if (!/^01\d{9}$/.test(phone)) return toast("اكتب رقم صحيح");
+  if (phone === ME.phone) return toast("ده رقمك :)");
+  const found = Object.values(users).find(u => u.phone === phone);
+  const box = $("findResult");
+  if (!found){
+    box.innerHTML = `<div class="find-result-err">❌ مفيش حد مسجل بالرقم ده</div>`;
+    return;
+  }
+  const av = found.avatar ? `<img src="${found.avatar}">` : esc(initials(found.name));
+  box.innerHTML = `
+    <div class="find-result-box">
+      <div class="find-head">
+        <div class="av sm">${av}</div>
+        <div class="info">
+          <b>${esc(found.name)} ${found.isOwner?'<span class="badge owner">👑</span>':''}</b>
+          <small>${esc(found.phone)}</small>
+        </div>
+      </div>
+      <div class="fld" style="margin-bottom:10px;">
+        <label>احفظه باسم (اختياري)</label>
+        <input id="aliasInp" placeholder="${esc(found.name)}" maxlength="25">
+      </div>
+      <div class="find-btns">
+        <button class="btn btn-grad" id="saveContactBtn">➕ حفظ</button>
+        <button class="btn btn-ghost" id="chatNowBtn">💬 دردشة</button>
+      </div>
+    </div>
+  `;
+  $("saveContactBtn").onclick = async function(){
+    const alias = $("aliasInp").value.trim() || found.name;
+    await set(ref(db, "contacts/" + ME.uid + "/" + found.uid), { alias, addedAt: Date.now() });
+    toast("✅ تم الحفظ");
+    closeMod("mAdd");
+    document.querySelector('[data-tab="contacts"]').click();
+  };
+  $("chatNowBtn").onclick = async function(){
+    if (!myContacts[found.uid]){
+      const alias = $("aliasInp").value.trim() || found.name;
+      await set(ref(db, "contacts/" + ME.uid + "/" + found.uid), { alias, addedAt: Date.now() });
+    }
+    closeMod("mAdd");
+    setTimeout(()=>openPrivate(found.uid), 200);
+  };
+};
+
+/* ============ Private Chat ============ */
+window.openPrivate = function(otherUid){
+  const other = users[otherUid]; if (!other) return toast("المستخدم غير موجود");
+  const cid = [ME.uid, otherUid].sort().join("__");
+  const alias = (myContacts[otherUid] && myContacts[otherUid].alias) || other.name;
+  currentChat = { type:"private", id:cid, otherUid };
+
+  const av = other.avatar ? `<img src="${other.avatar}">` : esc(initials(alias));
+  $("chAv").innerHTML = av;
+  $("chT").innerHTML = esc(alias) + (other.isOwner?' <span class="badge owner">👑</span>':'');
+  $("chS").innerHTML = other.online ? '<span style="color:#10b981;">●</span> متصل الآن' : 'آخر ظهور ' + fmtTime(other.lastSeen||Date.now());
+  $("chatInfo").style.display = "none";
+  $("chat").classList.add("on");
+  setTimeout(()=>$("msgInp").focus(), 200);
+  listenMessages("private/" + cid, other, null);
+};
+
+window.openGroup = function(gid){
+  const g = groups[gid]; if (!g) return;
+  currentChat = { type:"group", id:gid };
+  $("chAv").innerHTML = "👥";
+  $("chT").textContent = g.name;
+  $("chS").textContent = Object.keys(g.members).length + " عضو";
+  $("chatInfo").style.display = "flex";
+  $("chat").classList.add("on");
+  setTimeout(()=>$("msgInp").focus(), 200);
+  listenMessages("group/" + gid, null, g);
+};
+
+function refreshChatHeader(){
+  if (currentChat && currentChat.type === "group"){
+    const g = groups[currentChat.id];
+    if (g){ $("chT").textContent = g.name; $("chS").textContent = Object.keys(g.members).length+" عضو"; }
+  }
+}
+
+/* ============ Listen Messages ============ */
+function listenMessages(path, other, group){
+  if (unsubMsgs) unsubMsgs();
+  if (unsubTyping) unsubTyping();
+  const box = $("msgs");
+  box.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px;">جارٍ التحميل...</div>';
+
+  unsubMsgs = onValue(ref(db, "messages/" + path), snap => {
+    box.innerHTML = "";
+    const data = snap.val() || {};
+    const list = Object.values(data).sort((a,b)=>(a.time||0)-(b.time||0));
+    if (!list.length){
+      box.innerHTML = '<div class="empty" style="padding:50px 20px;"><div class="big">💬</div><p>ابدأ الدردشة</p></div>';
+      return;
+    }
+    let lastDay = "";
+    list.forEach(m => {
+      const mine = m.from === ME.uid;
+      const day = fmtDate(m.time);
+      if (day !== lastDay){
+        lastDay = day;
+        const sep = document.createElement("div"); sep.className = "daysep"; sep.textContent = day;
+        box.appendChild(sep);
+      }
+      const senderName = (group && !mine) ? ((users[m.from] && users[m.from].name) || "مجهول") : "";
+      const tick = mine ? `<span class="tick ${m.read?'read':''}">${m.read?'✓✓':'✓'}</span>` : "";
+      const div = document.createElement("div");
+      div.className = "bub " + (mine ? "me" : "them") + (m.storyReply ? " story-reply" : "");
+      div.innerHTML = `${senderName?`<div class="sn">${esc(senderName)}</div>`:""}${esc(m.text)}<div class="tm">${fmtTime(m.time)} ${tick}</div>`;
+      box.appendChild(div);
+    });
+    box.scrollTop = box.scrollHeight;
+
+    if (other){
+      snap.forEach(child => {
+        const m = child.val();
+        if (m.from !== ME.uid && !m.read){
+          update(ref(db, "messages/" + path + "/" + child.key), { read: true });
+        }
+      });
+    }
+  });
+
+  if (other){
+    unsubTyping = onValue(ref(db, "typing/" + path + "/" + other.uid), snap => {
+      const t = snap.val();
+      if (t && t.on) $("chS").innerHTML = '<span class="typing">بيكتب الآن</span>';
+      else $("chS").innerHTML = other.online ? '<span style="color:#10b981;">●</span> متصل الآن' : 'آخر ظهور ' + fmtTime(other.lastSeen||Date.now());
+    });
+  }
+}
+
+$("sendBtn").onclick = sendMsg;
+$("msgInp").addEventListener("keydown", function(e){ if(e.key==="Enter") sendMsg(); });
+$("msgInp").addEventListener("input", function(){
+  if (currentChat && currentChat.type === "private"){
+    const path = "private/" + currentChat.id;
+    set(ref(db, "typing/" + path + "/" + ME.uid), { on: true, t: Date.now() });
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(function(){
+      set(ref(db, "typing/" + path + "/" + ME.uid), { on: false });
+    }, 1500);
+  }
+});
+
+function sendMsg(){
+  const text = $("msgInp").value.trim();
+  if (!text || !currentChat) return;
+  const path = currentChat.type === "private" ? "messages/private/" + currentChat.id : "messages/group/" + currentChat.id;
+  push(ref(db, path), { from: ME.uid, name: ME.name, text, time: Date.now(), read: false });
+  if (currentChat.type === "private") set(ref(db, "typing/private/" + currentChat.id + "/" + ME.uid), { on: false });
+  $("msgInp").value = ""; $("msgInp").focus();
+}
+
+$("chatBack").onclick = function(){
+  $("chat").classList.remove("on");
+  if (unsubMsgs) { unsubMsgs(); unsubMsgs=null; }
+  if (unsubTyping) { unsubTyping(); unsubTyping=null; }
+  currentChat = null;
+};
+
+/* ============ New Group ============ */
+$("btnGrp").onclick = function(){
+  $("gN").value = "";
+  const box = $("gPick");
+  const arr = Object.keys(myContacts).map(uid => users[uid]).filter(Boolean);
+  if (!arr.length){
+    box.innerHTML = `<div style="color:var(--muted);text-align:center;padding:14px;font-size:13px;">أضف جهات اتصال أولاً</div>`;
+  } else {
+    box.innerHTML = arr.map(u => {
+      const alias = (myContacts[u.uid] && myContacts[u.uid].alias) || u.name;
+      const av = u.avatar ? `<img src="${u.avatar}">` : esc(initials(alias));
+      return `<div class="pick" data-uid="${u.uid}" onclick="this.classList.toggle('sel')"><div class="av xs">${av}</div><div class="info"><b>${esc(alias)}</b><small>${esc(u.phone)}</small></div><div class="chk">✓</div></div>`;
+    }).join("");
+  }
+  openMod("mGroup");
+};
+
+$("gCreate").onclick = async function(){
+  const name = $("gN").value.trim();
+  if (name.length < 2) return toast("اكتب اسم الجروب");
+  const picks = [...document.querySelectorAll("#gPick .pick.sel")].map(el => el.dataset.uid);
+  const members = { [ME.uid]: "admin" };
+  picks.forEach(uid => members[uid] = "member");
+  const gid = "g_" + Date.now();
+  await set(ref(db, "groups/" + gid), { id: gid, name, owner: ME.uid, members, time: Date.now() });
+  closeMod("mGroup"); toast("✅ تم"); setTimeout(()=>openGroup(gid), 250);
+};
+
+$("chatInfo").onclick = function(){
+  if (!currentChat || currentChat.type !== "group") return;
+  const g = groups[currentChat.id]; if (!g) return;
+  $("memT").textContent = "👥 " + g.name;
+  $("memS").textContent = Object.keys(g.members).length + " عضو";
+  const box = $("memL");
+  const iAmAdmin = g.members[ME.uid]==="admin" || ME.isOwner;
+  box.innerHTML = Object.entries(g.members).map(([uid, role]) => {
+    const u = users[uid] || { name:"مجهول", phone:"" };
+    const alias = (uid===ME.uid)?ME.name:((myContacts[uid] && myContacts[uid].alias)||u.name);
+    const isAdmin = role==="admin";
+    const av = u.avatar ? `<img src="${u.avatar}">` : esc(initials(alias));
+    return `<div class="member-row">
+      <div class="av xs">${av}</div>
+      <div class="info"><b>${esc(alias)} ${isAdmin?'<span class="badge admin">مشرف</span>':''} ${u.isOwner?'<span class="badge owner">👑</span>':''}</b><small>${esc(u.phone||"")}</small></div>
+      ${(iAmAdmin && uid!==ME.uid)?`<button class="mini-btn" onclick="toggleAdmin('${currentChat.id}','${uid}')">${isAdmin?'⬇️':'⬆️'}</button><button class="mini-btn" style="background:rgba(239,68,68,.15);" onclick="kickMember('${currentChat.id}','${uid}')">✖️</button>`:""}
+    </div>`;
+  }).join("");
+  openMod("mMembers");
+};
+window.toggleAdmin = async function(gid, uid){
+  const g = groups[gid]; const isAdmin = g.members[uid]==="admin";
+  await update(ref(db, "groups/"+gid+"/members/"+uid), isAdmin?"member":"admin");
+  toast(isAdmin?"⬇️":"⬆️ مشرف"); setTimeout(()=>$("chatInfo").click(), 250);
+};
+window.kickMember = async function(gid, uid){
+  if(!confirm("طرد؟"))return;
+  await remove(ref(db, "groups/"+gid+"/members/"+uid));
+  toast("تم"); setTimeout(()=>$("chatInfo").click(), 250);
+};
+
+/* ============ Profile ============ */
+window.openProfile = function(){
+  profAvatarData = ME.avatar || "";
+  const av = ME.avatar ? `<img src="${ME.avatar}">` : esc(initials(ME.name));
+  $("profAv").innerHTML = av + '<div class="edit">📷</div>';
+  $("profN").value = ME.name; $("profBio").value = ME.bio || "";
+  openMod("mProf");
+};
+$("profAvFile").onchange = function(e){
+  const f = e.target.files[0]; if(!f)return;
+  const r = new FileReader();
+  r.onload = ev => { profAvatarData = ev.target.result; $("profAv").innerHTML = `<img src="${profAvatarData}"><div class="edit">📷</div>`; };
+  r.readAsDataURL(f);
+};
+$("profSave").onclick = async function(){
+  const name = $("profN").value.trim();
+  const bio = $("profBio").value.trim();
+  if (name.length < 2) return toast("اكتب اسم صحيح");
+  await update(ref(db, "users/" + ME.uid), { name, bio, avatar: profAvatarData });
+  ME.name = name; ME.bio = bio; ME.avatar = profAvatarData;
+  renderMyAvatar();
+  $("myN").innerHTML = esc(ME.name) + (ME.isOwner?' <span class="badge owner">👑</span>':'');
+  closeMod("mProf"); toast("✅ تم الحفظ");
+};
+
+/* ============ Menu ============ */
+$("btnMenu").onclick = function(){ openMod("mMenu"); };
+$("btnLogout").onclick = async function(){
+  if (!confirm("خروج؟")) return;
+  await update(ref(db, "users/" + ME.uid), { online: false, lastSeen: Date.now() });
+  localStorage.removeItem("yassin_chat_me");
+  location.reload();
+};
+
+$("btnMyContacts").onclick = function(){
+  const list = Object.keys(myContacts).map(uid => ({ uid, alias: myContacts[uid].alias || (users[uid] && users[uid].name) || "?" }));
+  const box = $("myContactsList");
+  if (!list.length){
+    box.innerHTML = `<div style="text-align:center;color:var(--muted);padding:14px;">لا توجد جهات اتصال</div>`;
+  } else {
+    box.innerHTML = list.map(c => `
+      <div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;margin-bottom:6px;background:var(--card2);">
+        <div class="av xs">${esc(initials(c.alias))}</div>
+        <div style="flex:1;"><b style="font-size:13.5px;">${esc(c.alias)}</b></div>
+        <button style="width:34px;height:34px;border-radius:10px;background:rgba(239,68,68,.15);" onclick="delContact('${c.uid}')">🗑️</button>
+      </div>
+    `).join("");
+  }
+  closeMod("mMenu");
+  openMod("mContacts");
+};
+window.delContact = async function(uid){
+  if (!confirm("حذف؟")) return;
+  await remove(ref(db, "contacts/" + ME.uid + "/" + uid));
+  toast("تم"); setTimeout(()=>$("btnMyContacts").click(), 250);
+};
+
+$("searchInp").addEventListener("input", function(){ renderAll(); });
+$("fab").onclick = function(){ $("btnAdd").click(); };
+
+/* ============ Story Viewer Close on Backdrop ============ */
+$("storyViewer").addEventListener("click", function(e){
+  if (e.target.id === "storyViewer") $("storyViewer").classList.remove("on");
+});
+</script>
+</body>
+</html>
